@@ -21,6 +21,7 @@ struct parser
     token* currtoken(int);
     token* consume();
     token* require(token_type);
+    token* sametok(token_type);
     token_type lookahead();
     token_type lookahead(int);
 };

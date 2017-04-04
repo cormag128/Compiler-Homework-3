@@ -80,10 +80,28 @@ token* parser::consume()
     return tok;
 }
 
+//require the token type t
 token* parser::require(token_type t)
 {
     if(lookahead() == t)
     {
         return consume();
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+token* parser::sametok(token_type t)
+{
+    if(lookahead() == t)
+    {
+        return consume();
+    }
+    else
+    {
+        std::cout << "invalid token type";
+        return nullptr;
     }
 }
