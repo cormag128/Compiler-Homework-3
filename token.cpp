@@ -1,5 +1,6 @@
 #include "token.hpp"
 
+//case structure to give a name based  upon the token type as a string
 const char* token::getname(token_type type)
 {
     switch(type)
@@ -23,6 +24,8 @@ const char* token::getname(token_type type)
         case lparen_tok: return "lparen_tok";
         case rparen_tok: return "rparen_tok";
 
+        case eof_tok: return "eof_tok";
+
         case bool_tok: return "bool_tok";
         case int_tok: return "int_tok";
 
@@ -31,6 +34,7 @@ const char* token::getname(token_type type)
     }
 }
 
+//case structure to give the symbols of the token
 const char* token::getsymbol(token_type type)
 {
     switch(type)
@@ -53,6 +57,8 @@ const char* token::getsymbol(token_type type)
         case colon_tok: return ":";
         case lparen_tok: return "(";
         case rparen_tok: return ")";
+
+        case eof_tok: return " EOF";
 
         case bool_tok: return "boolean";
         case int_tok: return "integer";

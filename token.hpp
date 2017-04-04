@@ -5,6 +5,7 @@
 
 #include <iostream>
 
+//enumerate all token types in
 enum token_type
 {
     add_tok,
@@ -26,10 +27,13 @@ enum token_type
     lparen_tok,
     rparen_tok,
 
+    eof_tok,
+
     bool_tok,
     int_tok
 };
 
+//build basic framework for tokens
 struct token
 {
     token(token_type t) : type(t){}
@@ -39,6 +43,7 @@ struct token
     const char* getsymbol(token_type);
 };
 
+//build basic framework for the integer tokens
 struct int_token : token
 {
     int val;
@@ -49,6 +54,7 @@ struct int_token : token
     }
 };
 
+//create framework for boolean tokens
 struct bool_token : token
 {
     bool val;

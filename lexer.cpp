@@ -1,8 +1,10 @@
 #include "lexer.hpp"
 
+//constructors
 lexer::lexer(const char* f, const char *fi) : first(f), final(fi){}
 lexer::lexer(const std::string& str) : lexer(&str[0], &str[0] + str.size()) {}
 
+//checks to see if we are at the end of the string
 bool lexer::eof()
 {
     if (first == final)
@@ -15,6 +17,7 @@ bool lexer::eof()
     }
 }
 
+//looks at the pointer to see what is held at this location
 char lexer::lookahead()
 {
     if (eof())
@@ -27,6 +30,7 @@ char lexer::lookahead()
     }
 }
 
+// ignores whitespace
 void lexer::ignoresp()
 {
     while(!eof() && std::isspace(lookahead()))
@@ -35,6 +39,7 @@ void lexer::ignoresp()
     }
 }
 
+//push the string into a temp that can then be lexed
 char lexer::consume()
 {
     if(!eof())
@@ -49,6 +54,7 @@ char lexer::consume()
     }
 }
 
+//will build the new token type that is given to it
 token* lexer::addtoken(token_type t)
 {
     ++first;
@@ -57,6 +63,7 @@ token* lexer::addtoken(token_type t)
     return tok;
 }
 
+//the actual lexer is designed to lex and build tokens as it reads them
 token* lexer::lex()
 {
     buf.clear();
