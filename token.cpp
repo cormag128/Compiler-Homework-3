@@ -1,4 +1,5 @@
 #include "token.hpp"
+#include <string>
 
 //case structure to give a name based  upon the token type as a string
 const char* token::getname(token_type type)
@@ -28,6 +29,7 @@ const char* token::getname(token_type type)
 
         case bool_tok: return "bool_tok";
         case int_tok: return "int_tok";
+        case id_tok: return "id_tok";
 
         default:
             return "unknown token";
@@ -62,8 +64,9 @@ const char* token::getsymbol(token_type type)
 
         case bool_tok: return "boolean";
         case int_tok: return "integer";
+        case id_tok: return "identifier";
 
         default:
-            return "unknown symbol";
+            return "unknown token";
     }
 }

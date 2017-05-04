@@ -2,7 +2,8 @@
 #define TOKEN_HPP
 
 #include <string>
-
+#include <iosfwd>
+#include "symbolmap.hpp"
 #include <iostream>
 
 //enumerate all token types in
@@ -28,6 +29,7 @@ enum token_type
     rparen_tok,
 
     eof_tok,
+    id_tok,
 
     bool_tok,
     int_tok
@@ -64,4 +66,13 @@ struct bool_token : token
         val = n;
     }
 };
+
+//create framework for identifier tokens, gives us a new symbol
+struct id_token : token
+{
+    symbol* sym;
+    id_token(symbol* s) : token(id_tok), sym(s) { }
+    std::string str() {return *sym;}
+};
+
 #endif

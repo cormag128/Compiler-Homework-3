@@ -1,4 +1,3 @@
-
 #ifndef AST_HPP
 #define AST_HPP
 
@@ -7,9 +6,11 @@
 //struct for types
 struct Bool_type;
 struct Int_type;
+struct decl;
 
 //declarations for expressions
 struct Bool_expr;           //Complete
+struct Int_expr;            //Framework
 struct And_expr;            //Complete
 struct Or_expr;             //Complete
 struct Not_expr;            //Complete
@@ -27,6 +28,7 @@ struct mult_expr;           //Framework
 struct div_expr;            //Framework
 struct rem_expr;            //Framework
 struct neg_expr;            //Framework
+struct ref_expr;            //Framework
 
 //included struct for type
 struct Type {
@@ -39,11 +41,21 @@ struct Type {
 struct Bool_type : Type { };
 struct Int_type : Type { };
 
+struct ref_type : Type
+{
+    Type* obj;
+    ref_type(Type* t) : obj(t){}
+};
+
 //Expression building
 struct Expr {
-  struct Visitor;
-  virtual ~Expr() = default;
-  virtual void accept(Visitor&) = 0;
+
+    struct Visitor;
+    virtual ~Expr() = default;
+    virtual void accept(Visitor&) = 0;
+
+    Expr(Type* t) : ty(t){}
+    Type* ty;
 };
 
 //Expr::Visitor struct
@@ -67,20 +79,35 @@ struct Expr::Visitor
   virtual void visit(div_expr*) = 0;
   virtual void visit(rem_expr*) = 0;
   virtual void visit(neg_expr*) = 0;
+  virtual void visit(Int_expr*) = 0;
 };
 
 //Boolean expression that sets true or false
 struct Bool_expr : Expr {
   bool val;
-  Bool_expr(bool b) : val(b) { }
+  Bool_expr(Type* t,bool b) : Expr(t), val(b) { }
   void accept(Visitor& v) { return v.visit(this); }
+};
+
+//int expression that returns an int
+struct Int_expr : Expr
+{
+    int val;
+    Int_expr(Type* t, int n) : Expr(t), val(n){}
+    void accept(Visitor& v) {return v.visit(this);}
+};
+
+struct ref_expr : Expr
+{
+    decl* ref;
+    ref_expr(Type* t, decl* d) : Expr(t), ref(d){}
 };
 
 //And Expression
 struct And_expr : Expr {
   Expr* e1;
   Expr* e2;
-  And_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2) { }
+  And_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2) { }
   void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -88,14 +115,14 @@ struct And_expr : Expr {
 struct Or_expr : Expr {
   Expr* e1;
   Expr* e2;
-  Or_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2) { }
+  Or_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2) { }
   void accept(Visitor& v) { return v.visit(this); }
 };
 
 //Not Expression
 struct Not_expr : Expr {
   Expr* e1;
-  Not_expr(Expr* e1) : e1(e1) { }
+  Not_expr(Type* t, Expr* e1) : Expr(t), e1(e1) { }
   void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -103,7 +130,7 @@ struct Not_expr : Expr {
 struct xor_expr : Expr {
     Expr* e1;
     Expr* e2;
-    xor_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    xor_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -112,14 +139,14 @@ struct ifthenelse_expr : Expr {
     Expr* e1;
     Expr* e2;
     Expr* e3;
-    ifthenelse_expr(Expr* e1, Expr* e2, Expr* e3) : e1(e1), e2(e2), e3(e3){}
+    ifthenelse_expr(Type* t, Expr* e1, Expr* e2, Expr* e3) : Expr(t), e1(e1), e2(e2), e3(e3){}
 };
 
 //Equality expression
 struct equal_expr : Expr {
     Expr* e1;
     Expr* e2;
-    equal_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    equal_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -127,7 +154,7 @@ struct equal_expr : Expr {
 struct notequal_expr : Expr {
     Expr* e1;
     Expr* e2;
-    notequal_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    notequal_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -135,7 +162,7 @@ struct notequal_expr : Expr {
 struct lessthan_expr : Expr {
     Expr* e1;
     Expr* e2;
-    lessthan_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    lessthan_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -143,7 +170,7 @@ struct lessthan_expr : Expr {
 struct greaterthan_expr : Expr {
     Expr* e1;
     Expr* e2;
-    greaterthan_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    greaterthan_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -151,7 +178,7 @@ struct greaterthan_expr : Expr {
 struct lessorequal_expr : Expr {
     Expr* e1;
     Expr* e2;
-    lessorequal_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    lessorequal_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -159,7 +186,7 @@ struct lessorequal_expr : Expr {
 struct greaterorequal_expr : Expr {
     Expr* e1;
     Expr* e2;
-    greaterorequal_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    greaterorequal_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -167,7 +194,7 @@ struct greaterorequal_expr : Expr {
 struct add_expr : Expr {
     Expr* e1;
     Expr* e2;
-    add_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    add_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -175,7 +202,7 @@ struct add_expr : Expr {
 struct sub_expr : Expr {
     Expr* e1;
     Expr* e2;
-    sub_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    sub_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -183,7 +210,7 @@ struct sub_expr : Expr {
 struct mult_expr : Expr {
     Expr* e1;
     Expr* e2;
-    mult_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    mult_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -191,7 +218,7 @@ struct mult_expr : Expr {
 struct div_expr : Expr {
     Expr* e1;
     Expr* e2;
-    div_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    div_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -199,14 +226,14 @@ struct div_expr : Expr {
 struct rem_expr : Expr {
     Expr* e1;
     Expr* e2;
-    rem_expr(Expr* e1, Expr* e2) : e1(e1), e2(e2){}
+    rem_expr(Type* t, Expr* e1, Expr* e2) : Expr(t), e1(e1), e2(e2){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
 //Negative operator, sets a number to negative version
 struct neg_expr : Expr {
     Expr* e1;
-    neg_expr(Expr* e1) : e1(e1){}
+    neg_expr(Type* t, Expr* e1) : Expr(t), e1(e1){}
     void accept(Visitor& v) { return v.visit(this); }
 };
 
@@ -215,6 +242,8 @@ struct Context
 {
   Bool_type bool_type;
   Int_type int_type;
+  Type* bool_ty;
+  Type* int_ty;
 };
 
 

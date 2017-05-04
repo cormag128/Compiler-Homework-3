@@ -10,9 +10,15 @@ Type* check(Context& cxt, Expr* e)
     Context& cxt;
     Type* r;
     V(Context& c) : cxt(c) { }
+
     void visit(Bool_expr* e) {
       r = &cxt.bool_type;
     }
+
+    void visit(Int_expr* e) {
+        r = &cxt.int_type;
+    }
+
     void visit(And_expr* e) {
       // check that e->e1 is bool
       // check that e->e2 is bool

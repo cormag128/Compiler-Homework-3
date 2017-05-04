@@ -28,6 +28,7 @@ needs_parens(Expr* e)
     void visit(div_expr* e) { r = true; }
     void visit(rem_expr* e) { r = true; }
     void visit(neg_expr* e) { r = true; }
+    void visit(Int_expr* e) {r = false;}
   };
   V vis;
   e->accept(vis);
@@ -55,6 +56,11 @@ void print(Expr* e)
         std::cout << "true";
       else
         std::cout << "false";
+    }
+
+    //print Int values
+    void visit(Int_expr* e){
+        std::cout << e->val;
     }
 
     //print And expression
@@ -178,6 +184,7 @@ void print(Expr* e)
         std::cout << " >= ";
         print_enclosed(e->e1);
     }
+
   };
   V vis;
   e->accept(vis);
